@@ -48,7 +48,7 @@ con = sqlite3.connect(sqlite_file)
 
 __Write an SQL query to create a new dataframe about baseball players who attended BYU-Idaho. The new table should contain five columns: playerID, schoolID, salary, and the yearID/teamID associated with each salary. Order the table by salary (highest to lowest) and print out the table in your report.__  
 
-_type your results and analysis here_
+
 
 ```{python}
 # Include and execute your code here
@@ -71,8 +71,8 @@ ORDER BY
     s.salary DESC;
 """
 
-df = pd.read_sql_query(query, con)
-df.head(10)
+dfone = pd.read_sql_query(query, con)
+dfone
 
 ```
 
@@ -84,7 +84,7 @@ __This three-part question requires you to calculate batting average (number of 
     a. Use the same query as above, but only include players with at least 10 at bats that year. Print the top 5 results.  
     a. Now calculate the batting average for players over their entire careers (all years combined). Only include players with at least 100 at bats, and print the top 5 results.  
 
-_type your results and analysis here_
+
 
 ```{python}
 # Include and execute your code here
@@ -111,6 +111,7 @@ LIMIT 5;"""
 df_bat_av = pd.read_sql_query(queryB, con)
 df_bat_av
 
+
 ```
 
 ```{python}
@@ -134,7 +135,8 @@ df_bat_av
 
 __Pick any two baseball teams and compare them using a metric of your choice (average salary, home runs, number of wins, etc). Write an SQL query to get the data you need, then make a graph using Lets-Plot to visualize the comparison. What do you learn?__
 
-_type your results and analysis here_
+SL3 has very little data to track in this graph I don't know alot about baseball, but I assume they were a short lived team.
+
 
 ```{python}
 # Include and execute your code here
@@ -146,15 +148,29 @@ SELECT
 FROM
     teams
 WHERE
-    teamID IN ('NYA', 'BOS') AND yearID BETWEEN 2010 AND 2024
+    teamID IN ('SL3', 'BSN') 
 ORDER BY
     yearID, teamID;
 """
 
 df_teams = pd.read_sql_query(query, con)
 
-print("\nData retrieved from the database (first 5 rows):")
-print(df_teams.head())
+df_teams.head()
+
+# print(df_teams.columns)
+
+LetsPlot.setup_html(isolated_frame=True)
+
+plot = (ggplot(df_teams, aes(x='yearID', y='Wins', color='teamID')) +
+        geom_line(size=1.5) +
+        geom_point() +
+        labs(title='Wins Over Time: SL3 vs BSN',
+             x='Year',
+             y='Wins',
+             color='Team') +
+        theme_minimal())
+
+plot
 
 
 ```
@@ -214,7 +230,21 @@ _type your results and analysis here_
 
 ```{python}
 # Include and execute your code here
+# %%
 
+# must have the .sqlite file in the exact same folder or list your entire path to the file.
+
+sqlite_file = 'lahmansbaseballdb.sqlite'
+
+con = sqlite3.connect(sqlite_file)
+
+q = '''
+SELECT playerID, ROUND(CAST(H AS FLOAT)/AB, 3) AS batting_average, AB
+FROM batting
+LIMIT 2;
+'''
+qr = pd.read_sql_query(q,con)
+qr
 
 ```
 
