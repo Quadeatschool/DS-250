@@ -29,6 +29,7 @@ execute:
 import pandas as pd
 import numpy as np
 from lets_plot import *
+import json
 
 LetsPlot.setup_html(isolated_frame=True)
 ```
@@ -50,12 +51,17 @@ _A Client has requested this analysis and this is your one shot of what you woul
 
 __Fix all of the varied missing data types in the data to be consistent (all missing values should be displayed as “NaN”).__ In your report include one record example (one row) from your new data, in the raw JSON format. Your example should display the "NaN" for at least one missing value.__  
 
-_type your results and analysis here_
+We are missing the airport name in the following example.
 
 ```{python}
 # Include and execute your code here
-df = df.read_json("https://raw.githubusercontent.com/byuidatascience/data4missing/master/data-raw/flights_missing/flights_missing.json")
 
+df = df.replace(['N/A'], np.nan)
+
+# finds N/A and puts Nan
+
+example_row = df[df.isna().any(axis=1)].iloc[0].to_dict()
+print(json.dumps(example_row, default=str, indent=2))
 
 
 ```
@@ -65,11 +71,32 @@ df = df.read_json("https://raw.githubusercontent.com/byuidatascience/data4missin
 
 __Which airport has the worst delays?__ Describe the metric you chose, and why you chose it to determine the “worst” airport. Your answer should include a summary table that lists (for each airport) the total number of flights, total number of delayed flights, proportion of delayed flights, and average delay time in hours.   
 
-_type your results and analysis here_
+SFO has the worst delays by likely hood.
+prop_delayed is the metric I'm using because I think the clients of 
+a travel agent will be most interested in the liklyhood of their flight getting delayed.
 
 ```{python}
-# Include and execute your code here
 
+# Group by airport and calculate metrics
+airport_summary = (
+    df.groupby('airport_code')
+    .agg(
+        total_flights=('num_of_flights_total', 'sum'),
+        total_delayed=('num_of_delays_total', 'sum'),
+        total_delay_minutes=('minutes_delayed_total', 'sum')
+    )
+    .assign(
+        prop_delayed=lambda d: d['total_delayed'] / d['total_flights'],
+        avg_delay_hours=lambda d: d['total_delay_minutes'] / 60 / d['total_flights']
+    )
+    .reset_index()
+)
+
+# worst_by_prop = airport_summary.sort_values('prop_delayed', ascending=False)
+# display(worst_by_prop.head(10))  # Top 10 airports with worst delay proportion
+
+worst_airport = worst_by_prop.iloc[0]
+print(worst_airport)
 
 ```
 
