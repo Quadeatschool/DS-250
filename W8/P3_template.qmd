@@ -1,7 +1,7 @@
 ---
 title: "Client Report - Late Flights & Missing Data (JSON)"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Quade Hafen"
 format:
   html:
     self-contained: true
@@ -92,7 +92,7 @@ airport_summary = (
     .reset_index()
 )
 
-# worst_by_prop = airport_summary.sort_values('prop_delayed', ascending=False)
+worst_by_prop = airport_summary.sort_values('prop_delayed', ascending=False)
 # display(worst_by_prop.head(10))  # Top 10 airports with worst delay proportion
 
 worst_airport = worst_by_prop.iloc[0]
@@ -109,7 +109,27 @@ __What is the best month to fly if you want to avoid delays of any length?__ Des
 _type your results and analysis here_
 
 ```{python}
-# Include and execute your code here
+# remove nan columns
+df_sifted = df[df['month'].notna()] 
+
+best_month = (
+    df_sifted.groupby('month')
+    .agg(
+        total_flights=('num_of_flights_total', 'sum'),
+        total_delayed=('num_of_delays_total', 'sum'),
+        total_delay_minutes=('minutes_delayed_total', 'sum')
+    ) 
+    .assign(
+        prop_delayed=lambda d: d['total_delayed'] / d['total_flights'],
+        avg_delay_hours=lambda d: d['total_delay_minutes'] / 60 / d['total_flights']
+    )
+    .reset_index())
+
+best_by_prop = best_month.sort_values('prop_delayed', ascending=False)
+
+best_time = best_by_prop.iloc[11]
+
+best_time
 
 ```
 
