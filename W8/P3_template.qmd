@@ -127,7 +127,7 @@ best_month = (
 
 best_by_prop = best_month.sort_values('prop_delayed', ascending=False)
 
-best_time = best_by_prop.iloc[11]
+best_time = best_by_prop.head()
 
 best_time
 
@@ -147,28 +147,53 @@ _type your results and analysis here_
 
 ```{python}
 
-df['num_of_delays_late_aircraft'].fillna(df['Late-Arriving Aircraft'].mean(), inplace=True)
+
+df['num_of_delays_late_aircraft'].fillna(df['num_of_delays_late_aircraft'].mean(), inplace=True)
 
 df['Weather_Delays_Total'] = (
-    df['Weather'] + 
-    (df['Late-Arriving Aircraft'] * 0.3) +
-    np.where(df['month'].between(4, 8), df['NAS'] * 0.4, df['NAS'] * 0.65)
+    df['num_of_delays_weather'] + 
+    (df['num_of_delays_late_aircraft'] * 0.3) 
 )
 
 # Show first 5 rows
-df[['month', 'Weather', 'Late-Arriving Aircraft', 'NAS', 'Weather_Delays_Total']].head()
+df[['num_of_delays_weather', 'num_of_delays_late_aircraft', 'Weather_Delays_Total']].head()
+```
+
+
+```{python}
+# Include and execute your code here
+df['Weather_Delays_Total'] = (
+    df['num_of_delays_weather'] + 
+    (df['num_of_delays_late_aircraft'] * 0.3) 
+)
+
+# Show first 5 rows
+df[['num_of_delays_weather', 'num_of_delays_late_aircraft', 'Weather_Delays_Total']].head()
 ```
 
 
 ```{python}
 # Include and execute your code here
 
-```
+# fixes my problem with the months being strings.
+month_mapping = {
+    'January': 1, 'February': 2, 'March': 3, 'April': 4,
+    'May': 5, 'June': 6, 'July': 7, 'August': 8,
+    'September': 9, 'October': 10, 'November': 11, 'December': 12
+}
+
+df['month'] = df['month'].map(month_mapping)
 
 
-```{python}
-# Include and execute your code here
 
+df['Weather_Delays_Total'] = (
+    df['num_of_delays_weather'] + 
+    (df['num_of_delays_late_aircraft'] * 0.3) 
+    + (np.where(df['month'].between(4, 8), df['num_of_delays_nas'] * 0.4, df['num_of_delays_nas'] * 0.65))
+)
+
+# Show first 5 rows
+df[['month', 'num_of_delays_weather', 'num_of_delays_late_aircraft', 'Weather_Delays_Total']].head()
 ```
 
 
