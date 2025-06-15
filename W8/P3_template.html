@@ -2222,7 +2222,7 @@ vertical-align: -.125em;
   <li><a href="#stretch-questiontask-1" id="toc-stretch-questiontask-1">STRETCH QUESTION|TASK 1</a></li>
   </ul>
 </nav>
-<div id="69586f74" class="cell" data-execution_count="1">
+<div id="31aef77a" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -2233,7 +2233,7 @@ vertical-align: -.125em;
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html(isolated_frame<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="ca18ae92" class="cell" data-execution_count="2">
+<div id="4e1ce780" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html</span></span>
@@ -2251,7 +2251,7 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="questiontask-1">QUESTION|TASK 1</h2>
 <p><strong>Fix all of the varied missing data types in the data to be consistent (all missing values should be displayed as “NaN”).</strong> In your report include one record example (one row) from your new data, in the raw JSON format. Your example should display the “NaN” for at least one missing value.__</p>
 <p>We are missing the airport name in the following example.</p>
-<div id="ad9ed624" class="cell" data-execution_count="3">
+<div id="48891100" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Include and execute your code here</span></span>
@@ -2290,7 +2290,7 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="questiontask-2">QUESTION|TASK 2</h2>
 <p><strong>Which airport has the worst delays?</strong> Describe the metric you chose, and why you chose it to determine the “worst” airport. Your answer should include a summary table that lists (for each airport) the total number of flights, total number of delayed flights, proportion of delayed flights, and average delay time in hours.</p>
 <p>SFO has the worst delays by proportionof delays. prop_delayed is the metric I’m using because I think the clients of a travel agent will be most interested in the liklyhood of their flight getting delayed.</p>
-<div id="a0c5575e" class="cell" data-execution_count="4">
+<div id="a80c01d3" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by airport and calculate metrics</span></span>
@@ -2329,7 +2329,7 @@ Name: 5, dtype: object</code></pre>
 <h2 class="anchored" data-anchor-id="questiontask-3">QUESTION|TASK 3</h2>
 <p><strong>What is the best month to fly if you want to avoid delays of any length?</strong> Describe the metric you chose and why you chose it to calculate your answer. Include one chart to help support your answer, with the x-axis ordered by month. (To answer this question, you will need to remove any rows that are missing the <code>Month</code> variable.)</p>
 <p>September should be the best monnth to fly based on proportionof delays. prop_delayed is the metric I’m using because I think the clients of a travel agent will be most interested in the liklyhood of their flight getting delayed.</p>
-<div id="eb5b3c47" class="cell" data-execution_count="5">
+<div id="8f46d94e" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remove nan columns</span></span>
@@ -2369,22 +2369,22 @@ Name: 5, dtype: object</code></pre>
 <div class="cell-output cell-output-display" data-execution_count="5">
 
 <style>
-#altair-viz-8ac2819642834cfebdee3ae35f575d7c.vega-embed {
+#altair-viz-1bde9b7d1407488dac36fc9554a35f67.vega-embed {
 width: 100%;
 display: flex;
 }
-#altair-viz-8ac2819642834cfebdee3ae35f575d7c.vega-embed details,
-#altair-viz-8ac2819642834cfebdee3ae35f575d7c.vega-embed details summary {
+#altair-viz-1bde9b7d1407488dac36fc9554a35f67.vega-embed details,
+#altair-viz-1bde9b7d1407488dac36fc9554a35f67.vega-embed details summary {
 position: relative;
 }
 </style>
-<div id="altair-viz-8ac2819642834cfebdee3ae35f575d7c"></div>
+<div id="altair-viz-1bde9b7d1407488dac36fc9554a35f67"></div>
 <script type="text/javascript">
   var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
   (function(spec, embedOpt){
     let outputDiv = document.currentScript.previousElementSibling;
-    if (outputDiv.id !== "altair-viz-8ac2819642834cfebdee3ae35f575d7c") {
-      outputDiv = document.getElementById("altair-viz-8ac2819642834cfebdee3ae35f575d7c");
+    if (outputDiv.id !== "altair-viz-1bde9b7d1407488dac36fc9554a35f67") {
+      outputDiv = document.getElementById("altair-viz-1bde9b7d1407488dac36fc9554a35f67");
     }
 
     const paths = {
@@ -2444,7 +2444,7 @@ position: relative;
 a. 30% of all delayed flights in the Late-Arriving category are due to weather  
 a. From April to August, 40% of delayed flights in the NAS category are due to weather. The rest of the months, the proportion rises to 65%    </code></pre>
 <p><em>type your results and analysis here</em></p>
-<div id="67ad53fb" class="cell" data-execution_count="6">
+<div id="99d7f47b" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;num_of_delays_late_aircraft&#39;</span>].fillna(df[<span class="st">&#39;num_of_delays_late_aircraft&#39;</span>].mean(), inplace<span class="op">=</span><span class="va">True</span>)</span>
@@ -2507,7 +2507,7 @@ a. From April to August, 40% of delayed flights in the NAS category are due to w
 </div>
 </div>
 </div>
-<div id="a8ee5a12" class="cell" data-execution_count="7">
+<div id="8578d58f" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Include and execute your code here</span></span>
@@ -2569,7 +2569,7 @@ a. From April to August, 40% of delayed flights in the NAS category are due to w
 </div>
 </div>
 </div>
-<div id="fd274046" class="cell" data-execution_count="8">
+<div id="8b5403ff" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Include and execute your code here</span></span>
@@ -2655,7 +2655,7 @@ a. From April to August, 40% of delayed flights in the NAS category are due to w
 <h2 class="anchored" data-anchor-id="questiontask-5">QUESTION|TASK 5</h2>
 <p><strong>Using the new weather variable calculated above, create a barplot showing the proportion of all flights that are delayed by weather at each airport. Describe what you learn from this graph.</strong></p>
 <p>This not quite complete but SFO is looking like the worst for weater delays.</p>
-<div id="b7a57603" class="cell" data-execution_count="9">
+<div id="7b5603e0" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html(isolated_frame<span class="op">=</span><span class="va">True</span>) </span>
@@ -2685,7 +2685,7 @@ a. From April to August, 40% of delayed flights in the NAS category are due to w
 //# sourceMappingURL=lets-plot.js.map</script>
    
    
-          <div id="EO7e6H"></div>
+          <div id="76Up6I"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2710,7 +2710,7 @@ a. From April to August, 40% of delayed flights in the NAS category are due to w
        };
    }
    
-   const containerDiv = document.getElementById("EO7e6H");
+   const containerDiv = document.getElementById("76Up6I");
    let fig = null;
    
    function renderPlot() {
@@ -2809,7 +2809,7 @@ a. From April to August, 40% of delayed flights in the NAS category are due to w
 <h2 class="anchored" data-anchor-id="stretch-questiontask-1">STRETCH QUESTION|TASK 1</h2>
 <p><strong>Which delay is the worst delay?</strong> Create a similar analysis as above for Weahter Delay with: Carrier Delay and Security Delay. Compare the proportion of delay for each of the three categories in a Chart and a Table. Describe your results.</p>
 <p><em>type your results and analysis here</em></p>
-<div id="2eda3a09" class="cell" data-execution_count="10">
+<div id="4afe9746" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Include and execute your code here</span></span>
