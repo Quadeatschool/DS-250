@@ -71,7 +71,7 @@ print(json.dumps(example_row, default=str, indent=2))
 
 __Which airport has the worst delays?__ Describe the metric you chose, and why you chose it to determine the “worst” airport. Your answer should include a summary table that lists (for each airport) the total number of flights, total number of delayed flights, proportion of delayed flights, and average delay time in hours.   
 
-SFO has the worst delays by likely hood.
+SFO has the worst delays by proportionof delays.
 prop_delayed is the metric I'm using because I think the clients of 
 a travel agent will be most interested in the liklyhood of their flight getting delayed.
 
@@ -106,7 +106,9 @@ print(worst_airport)
 
 __What is the best month to fly if you want to avoid delays of any length?__ Describe the metric you chose and why you chose it to calculate your answer. Include one chart to help support your answer, with the x-axis ordered by month. (To answer this question, you will need to remove any rows that are missing the `Month` variable.)  
 
-_type your results and analysis here_
+September should be the best monnth to fly based on proportionof delays.
+prop_delayed is the metric I'm using because I think the clients of 
+a travel agent will be most interested in the liklyhood of their flight getting delayed.
 
 ```{python}
 # remove nan columns
@@ -125,11 +127,23 @@ best_month = (
     )
     .reset_index())
 
-best_by_prop = best_month.sort_values('prop_delayed', ascending=False)
+best_by_prop = best_month.sort_values('prop_delayed', ascending=True)
 
-best_time = best_by_prop.head()
+best_time = best_by_prop.iloc[0]
 
 best_time
+
+import altair as alt
+
+chart = alt.Chart(best_by_prop).mark_bar().encode(
+   x=alt.X('prop_delayed:Q', title='Proportion Delayed'),
+    y=alt.Y('month:O', sort='ascending', title='Month')
+).properties(
+    width=300,    # 👈 horizontal size
+    height=200    # optional vertical size
+)
+
+chart
 
 ```
 
@@ -204,7 +218,22 @@ __Using the new weather variable calculated above, create a barplot showing the 
 
 _type your results and analysis here_
 ```{python}
-# Include and execute your code here
+#from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)  # Ensure proper HTML rendering
+
+# Calculate the proportion of flights delayed by weather at each airport
+df['Weather_Delay_Proportion'] = df['Weather_Delays_Total'] / df['num_of_flights_total']
+
+# Group by airport and compute the average weather delay proportion
+df_sorted = df.groupby('airport').agg({'Weather_Delay_Proportion': 'mean'}).reset_index()
+df_sorted = df_sorted.sort_values(by='Weather_Delay_Proportion', ascending=False)
+
+# Generate the barplot with Lets-Plot
+ggplot(df_sorted) + \
+    geom_bar(aes(x='airport', y='Weather_Delay_Proportion'), stat='identity', fill='blue') + \
+    ggtitle("Weather Delay Proportion by Airport") + \
+    theme(axis_text_x=element_text(angle=45))  # Rotate x-axis labels for readability
 
 ```
 
@@ -219,8 +248,28 @@ __Which delay is the worst delay?__ Create a similar analysis as above for Weaht
 _type your results and analysis here_
 
 ```{python}
-# Include and execute your code here
 
+
+# Include and execute your code here
+# Read in libraries
+# import pandas as pd
+# import numpy as np
+# from lets_plot import *
+# LetsPlot.setup_html(isolated_frame=True)
+# df = pd.read_json("https://github.com/byuidatascience/data4missing/raw/master/data-raw/flights_missing/flights_missing.json")
+
+# df = df.replace(['N/A', 'n/a', 'NA', 'null', None, ''], np.nan)
+# records_with_nan_month = df['month'].isna().sum()
+
+# print(records_with_nan_month)
+
+# missing_records = df.isna().sum()
+
+# missing_rocord_of_23 = missing_records[missing_records == 23]
+
+# missing_rocord_of_23
+
+# print(df['month'].unique())
 
 ```
 
