@@ -216,24 +216,26 @@ df[['month', 'num_of_delays_weather', 'num_of_delays_late_aircraft', 'Weather_De
 
 __Using the new weather variable calculated above, create a barplot showing the proportion of all flights that are delayed by weather at each airport. Describe what you learn from this graph.__  
 
-_type your results and analysis here_
+This not quite complete but SFO is looking like the worst for weater delays.
 ```{python}
-#from lets_plot import *
 
-LetsPlot.setup_html(isolated_frame=True)  # Ensure proper HTML rendering
+LetsPlot.setup_html(isolated_frame=True) 
 
 # Calculate the proportion of flights delayed by weather at each airport
 df['Weather_Delay_Proportion'] = df['Weather_Delays_Total'] / df['num_of_flights_total']
 
 # Group by airport and compute the average weather delay proportion
-df_sorted = df.groupby('airport').agg({'Weather_Delay_Proportion': 'mean'}).reset_index()
+
+df_sorted = df.groupby('airport_code').agg({'Weather_Delay_Proportion': 'mean'}).reset_index()
 df_sorted = df_sorted.sort_values(by='Weather_Delay_Proportion', ascending=False)
 
-# Generate the barplot with Lets-Plot
+# crafts the barplot with Lets-Plot
 ggplot(df_sorted) + \
-    geom_bar(aes(x='airport', y='Weather_Delay_Proportion'), stat='identity', fill='blue') + \
+    geom_bar(aes(x='airport_code', y='Weather_Delay_Proportion'), stat='identity', fill='blue') + \
     ggtitle("Weather Delay Proportion by Airport") + \
-    theme(axis_text_x=element_text(angle=45))  # Rotate x-axis labels for readability
+    theme(axis_text_x=element_text(angle=45))  
+    
+    # This is strange, but it rotates the x-axis labels for readability
 
 ```
 
