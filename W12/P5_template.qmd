@@ -342,14 +342,6 @@ __Build a machine learning model that predicts whether a person makes more than 
 _type your results and analysis here_
 
 ```{python}
-
-print("Missing income_num values:", df['income_num'].isna().sum())
-print("Unique values in income_num:", df['income_num'].unique())
-print(X.select_dtypes(include='object').columns)
-
-```
-
-```{python}
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
@@ -361,6 +353,12 @@ df_clean = df.dropna(subset=['income_num'])
 # 2. Separate X and y
 X = df_clean.drop(columns=['income_num'])
 y = df_clean['income_num'].astype(int)
+
+# side quest
+print("Missing income_num values:", df['income_num'].isna().sum())
+print("Unique values in income_num:", df['income_num'].unique())
+print(X.select_dtypes(include='object').columns)
+
 
 # 3. Fill NaNs with "Missing" **before** encoding
 X = X.fillna("Missing")
@@ -423,42 +421,5 @@ _type your results and analysis here_
 
 ```
 
-
-<!-- ```{python}
-# %%
-# Read in libraries
-import pandas as pd
-import numpy as np
-from lets_plot import *
-LetsPlot.setup_html(isolated_frame=True)
-url = 'https://github.com/fivethirtyeight/data/raw/master/star-wars-survey/StarWars.csv'
-```
-
-Calculate the percentage of people that have seen at least one of the films (report to four decimal places).
-```{python}
-df = pd.read_csv(url, encoding='ISO-8859-1')
-seen_col = 'Have you seen any of the 6 films in the Star Wars franchise?'
-
-seen_count = (df[seen_col] == 'Yes').sum()
-total_count = df[seen_col].isin(['Yes', 'No']).sum()
-
-
-percentage_seen = (seen_count / total_count) * 100
-print(f"Percentage of people that have seen at least one film: {percentage_seen:.4f}%")
-
-``` 
-
-
-What percent of males have seen at least one film (report to four decimal places)?
-
-
-```{python}
-male_df = df[df['Gender'] == 'Male']
-male_seen_count = (male_df[seen_col] == 'Yes').sum()
-male_total_count = male_df.shape[0]
-
-male_percentage_seen = (male_seen_count / male_total_count) * 100
-print(f"Percentage of males that have seen at least one film: {male_percentage_seen:.4f}%")
-
-``` -->
 ---
+
