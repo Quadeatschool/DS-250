@@ -1,0 +1,265 @@
+---
+title: "Client Report - Code Challenge"
+subtitle: "Course DS 250"
+author: "Quade Hafen"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+
+```{python}
+import pandas as pd
+import numpy as np
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+
+# df = pd.DataFrame({'x': range(10), 'y': np.random.randint(1, 100, 10)})
+# ggplot(df, aes(x='x', y='y')) + geom_point()
+
+
+```
+
+## Question|Task 1
+
+Recreate the following image with the housing dataLinks to an external site.:
+Titles (chart and axis)
+Axis (same data types)
+Dots (colors)
+
+```{python}
+#partially working code
+
+# Load the data
+url = "https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_denver/dwellings_denver.csv"
+df = pd.read_csv(url)
+
+# Display basic info about the dataset to understand structure
+print("Dataset shape:", df.shape)
+print("\nColumn names:")
+print(df.columns.tolist())
+print("\nFirst few rows:")
+print(df.head())
+
+# Explore the data structure
+print("\nData types and sample values:")
+for col in df.columns:
+    print(f"\n{col} ({df[col].dtype}):")
+    if df[col].dtype == 'object':
+        print(f"  Unique values: {df[col].unique()}")
+    else:
+        print(f"  Range: {df[col].min()} to {df[col].max()}")
+        print(f"  Sample values: {df[col].head().tolist()}")
+
+# Based on typical housing datasets, likely column names might be:
+# - Year built: 'yrbuilt', 'year_built', 'built_year', etc.
+# - Square footage: 'sqft', 'livearea', 'totalsqft', 'square_feet', etc.  
+# - Stories/levels: 'stories', 'levels', 'floors', etc.
+
+# Let's create a function to find the most likely column matches
+def find_column(df, possible_names):
+    """Find the first matching column name from a list of possibilities"""
+    for name in possible_names:
+        if name in df.columns:
+            return name
+    return None
+
+# Try to identify the correct columns
+year_col = find_column(df, ['yrbuilt', 'year_built', 'built_year', 'yearbuilt', 'built'])
+sqft_col = find_column(df, ['sqft', 'livearea', 'totalsqft', 'square_feet', 'sqfeet', 'sprice'])
+stories_col = find_column(df, ['stories', 'levels', 'floors', 'story', 'numberstory'])
+
+print(f"\nIdentified columns:")
+print(f"Year built: {year_col}")
+print(f"Square footage: {sqft_col}")  
+print(f"Stories/levels: {stories_col}")
+
+# If we found the columns, create the plot
+if year_col and sqft_col and stories_col:
+    # Clean and prepare the data
+    plot_df = df[[year_col, sqft_col, stories_col]].copy()
+    plot_df = plot_df.dropna()
+    
+    # Convert stories to categorical for better legend
+    plot_df[stories_col] = plot_df[stories_col].astype(str)
+    
+    # Create the scatter plot
+    plot = (ggplot(plot_df, aes(x=year_col, y=sqft_col, color=stories_col)) + 
+            geom_point(alpha=0.6, size=1.2) +
+            labs(title="Thank goodness the 21st century doesn't have split levels",
+                 x="Year built", 
+                 y="Square footage of home (sq)") +
+            scale_color_manual(name="Standard house types",
+                              values=["#2E8B57", "#FF8C00", "#9370DB"],  # Green, Orange, Purple
+                              labels=["ONE-STORY", "SPLIT LEVEL", "TWO-STORY"]) +
+            scale_y_continuous(limits=[0, 10000]) +
+            scale_x_continuous(limits=[1860, 2020]) +
+            theme_minimal() +
+            theme(panel_grid_major=element_line(color="lightgray", size=0.5),
+                  panel_grid_minor=element_line(color="lightgray", size=0.3),
+                  legend_position="bottom"))
+    
+    print("\nCreated plot:")
+    plot.show()
+else:
+    print("\nCould not automatically identify all required columns.")
+    print("Please check the column names above and manually specify:")
+    print("- Year built column")
+    print("- Square footage column") 
+    print("- Stories/levels column")
+    print("\nThen update the plot code accordingly.")
+```
+
+
+
+## Question|Task 2
+
+Calculate the mean of `column 1` after using `data cleansing techniques` and replacing the missing values with the mean of `column2` (2 decimal places):
+my_df = pd.DataFrame({
+
+"column1": ['N/A', 52, 22, 45, 31, -999, 21, 2, 0, 0, 'broken', 19, 6, 27, 0, np.nan, 0, 33, 42, -999],
+
+"column2": [25.7, 6.6, 42.5, 72.0, 4.8, 4.0, 81.2, 654.5, 42.0, 5.7, 54.2, 4.2, 6.3, 76.5, 7.2, 42.5, 76.8, 46.2, 11.9, 94.6]
+
+ })
+
+```{python}
+
+my_df = pd.DataFrame({
+    "column1": ['N/A', 52, 22, 45, 31, -999, 21, 2, 0, 0, 'broken', 19, 6, 27, 0, np.nan, 0, 33, 42, -999],
+    "column2": [25.7, 6.6, 42.5, 72.0, 4.8, 4.0, 81.2, 654.5, 42.0, 5.7, 54.2, 4.2, 6.3, 76.5, 7.2, 42.5, 76.8, 46.2, 11.9, 94.6]
+})
+
+# 1. Standardize invalid entries as np.nan in column1
+my_df['column1'] = pd.to_numeric(my_df['column1'], errors='coerce')
+my_df['column1'].replace(-999, np.nan, inplace=True)
+
+# 2. Compute mean of column2
+col2_mean = my_df['column2'].mean()
+
+# 3. Replace missing values in column1 with mean of column2
+my_df['column1'].fillna(col2_mean, inplace=True)
+
+# 4. Compute mean of cleansed column1
+result = round(my_df['column1'].mean(), 2)
+print("Mean of column1 after cleansing and imputing:", result)
+
+```
+
+
+## Question|Task 3
+Split the `age` ranges into a data frame with two columns and re-create this histogram:
+ages = pd.Series(["10-25", "10-25", "26-35", "56-85", "0-9", "46-55",
+"56-85", "0-9", "26-35", "56-85", "0-9", "10-25"])
+
+```{python}
+
+# Step 1: Create age range series
+ages = pd.Series(["10-25", "10-25", "26-35", "56-85", "0-9", "46-55",
+                  "56-85", "0-9", "26-35", "56-85", "0-9", "10-25"])
+
+# Step 2: Split age ranges into midpoints for numeric analysis
+def range_midpoint(r):
+    start, end = map(int, r.split('-'))
+    return (start + end) // 2
+
+midpoints = ages.map(range_midpoint)
+
+# Step 3: Categorize into 'young' (0-35) and 'old' (36+)
+age_group = midpoints.apply(lambda x: 'young' if x <= 35 else 'old')
+
+# Step 4: Simulate values for each individual (you can replace this with real data if available)
+np.random.seed(42)  # reproducible results
+values = np.random.randint(5, 90, size=len(ages))
+
+# Step 5: Create DataFrame
+df = pd.DataFrame({
+    'variable': age_group,
+    'Value': values
+})
+
+# Step 6: Plot
+ggplot(df, aes(x='variable', y='Value')) + \
+    geom_boxplot(fill='#1f77b4', alpha=0.8) + \
+    theme_minimal()
+
+
+```
+
+
+## Question|Task 4
+
+Using the `dwellings_ml` dataLinks to an external site., complete the following:
+Predict if a home has more than two bathrooms
+Use `test_size = .25` and `random_state = 1776` in `train_test_split()`.
+Use the `GradientBoostingClassifier()` method
+Report your accuracy and a feature importance plot with the top 10 most important features
+
+```{python}
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import accuracy_score
+
+# Load data
+df = pd.read_csv('https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv')
+df['gt2_baths'] = (df['numbaths'] > 2).astype(int)
+
+# Prepare features and target
+features = df.drop(columns=['parcel', 'numbaths', 'gt2_baths'])
+target = df['gt2_baths']
+features = pd.get_dummies(features)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    features, target, test_size=0.25, random_state=1776
+)
+
+clf = GradientBoostingClassifier(random_state=1776)
+clf.fit(X_train, y_train)
+
+y_pred = clf.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.3f}')
+
+importances = clf.feature_importances_
+feature_names = features.columns
+imp_df = pd.DataFrame({
+    'feature': feature_names,
+    'importance': importances
+}).sort_values('importance', ascending=False).head(10)
+
+plot = (
+    ggplot(imp_df) +
+    geom_bar(aes(x='reorder(feature, importance)', y='importance'), stat='identity', fill='#1f77b4') +
+    ggtitle('Top 10 Feature Importances') +
+    xlab('Feature') +
+    ylab('Importance') +
+    coord_flip()
+)
+print(plot)
+``` 
+
+
+Note: Non executing Python `Snippets` include (3) \`\`\` followed by (3) more \`\`\`, each on their own line. These are not single quotes, they are the key left of the number 1 key on the keyboard. The top row can include the language of code that is pasted inbetween the \`\`\`  marks.  
+
+Note: These also work in `Slack` and it is expected they are used for any code shared in that app. No screen shots allowed.
