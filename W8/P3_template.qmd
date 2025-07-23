@@ -250,8 +250,151 @@ __Which delay is the worst delay?__ Create a similar analysis as above for Weaht
 _type your results and analysis here_
 
 ```{python}
+# First, let's clean the data and convert to numeric
+import pandas as pd
+import numpy as np
 
+# Convert columns to numeric, replacing any non-numeric values with NaN
+numeric_columns = ['num_of_flights_total', 'Weather_Delays_Total', 'num_of_delays_carrier', 'num_of_delays_security']
 
+for col in numeric_columns:
+    if col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+
+# Fill any remaining NaN values with 0 for delay columns (assuming 0 delays if missing)
+df['Weather_Delays_Total'] = df['Weather_Delays_Total'].fillna(0)
+df['num_of_delays_carrier'] = df['num_of_delays_carrier'].fillna(0)
+df['num_of_delays_security'] = df['num_of_delays_security'].fillna(0)
+
+# Remove rows where total flights is 0 or NaN (can't calculate proportions)
+df_clean = df[df['num_of_flights_total'] > 0].copy()
+
+print(f"Data shape after cleaning: {df_clean.shape}")
+print(f"Columns data types:")
+for col in numeric_columns:
+    if col in df_clean.columns:
+        print(f"{col}: {df_clean[col].dtype}")
+
+# Calculate proportions for each delay type
+delay_analysis = df_clean.groupby('airport_code').agg({
+    'num_of_flights_total': 'sum',
+    'Weather_Delays_Total': 'sum',  # Using the weather delay column you created
+    'num_of_delays_carrier': 'sum',
+    'num_of_delays_security': 'sum'
+}).reset_index()
+
+# Calculate proportions (ensuring we have numeric data)
+delay_analysis['Weather_Proportion'] = delay_analysis['Weather_Delays_Total'] / delay_analysis['num_of_flights_total']
+delay_analysis['Carrier_Proportion'] = delay_analysis['num_of_delays_carrier'] / delay_analysis['num_of_flights_total'] 
+delay_analysis['Security_Proportion'] = delay_analysis['num_of_delays_security'] / delay_analysis['num_of_flights_total']
+
+# Display the summary table
+print("\nDelay Comparison by Airport:")
+delay_summary = delay_analysis[['airport_code', 'Weather_Proportion', 'Carrier_Proportion', 'Security_Proportion']].round(4)
+print(delay_summary.to_string(index=False))
+
+# Calculate overall averages across all airports
+overall_weather = delay_analysis['Weather_Proportion'].mean()
+overall_carrier = delay_analysis['Carrier_Proportion'].mean()
+overall_security = delay_analysis['Security_Proportion'].mean()
+
+print(f"\nOverall Average Proportions:")
+print(f"Weather Delays: {overall_weather:.4f} ({overall_weather:.2%})")
+print(f"Carrier Delays: {overall_carrier:.4f} ({overall_carrier:.2%})")
+print(f"Security Delays: {overall_security:.4f} ({overall_security:.2%})")
+
+# Determine which is worst
+delay_types = {'Weather': overall_weather, 'Carrier': overall_carrier, 'Security': overall_security}
+worst_delay = max(delay_types, key=delay_types.get)
+best_delay = min(delay_types, key=delay_types.get)
+print(f"\nWorst delay type overall: {worst_delay} ({delay_types[worst_delay]:.4f} proportion)")
+print(f"Best (least problematic) delay type: {best_delay} ({delay_types[best_delay]:.4f} proportion)")
+
+# Reshape data for visualization
+import pandas as pd
+
+chart_data = []
+for _, row in delay_analysis.iterrows():
+    chart_data.append({'airport_code': row['airport_code'], 'delay_type': 'Weather', 'proportion': row['Weather_Proportion']})
+    chart_data.append({'airport_code': row['airport_code'], 'delay_type': 'Carrier', 'proportion': row['Carrier_Proportion']})
+    chart_data.append({'airport_code': row['airport_code'], 'delay_type': 'Security', 'proportion': row['Security_Proportion']})
+
+chart_df = pd.DataFrame(chart_data)
+
+# Create grouped bar chart using lets-plot
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+
+# Grouped bar chart by airport
+airport_chart = (ggplot(chart_df) + 
+    geom_bar(aes(x='airport_code', y='proportion', fill='delay_type'), 
+             stat='identity', position='dodge') +
+    ggtitle("Delay Type Proportions by Airport") +
+    xlab("Airport Code") +
+    ylab("Proportion of Flights Delayed") +
+    theme(axis_text_x=element_text(angle=45)) +
+    scale_fill_manual(values=['#1f77b4', '#ff7f0e', '#2ca02c']))
+
+print(airport_chart)
+
+# Create summary chart showing overall averages
+summary_data = pd.DataFrame({
+    'delay_type': ['Weather', 'Carrier', 'Security'],
+    'proportion': [overall_weather, overall_carrier, overall_security]
+})
+
+summary_chart = (ggplot(summary_data) + 
+    geom_bar(aes(x='delay_type', y='proportion', fill='delay_type'), 
+             stat='identity') +
+    ggtitle("Overall Average Delay Proportions") +
+    xlab("Delay Type") +
+    ylab("Average Proportion of Flights Delayed") +
+    scale_fill_manual(values=['#1f77b4', '#ff7f0e', '#2ca02c']))
+
+print(summary_chart)
+
+# Analysis of Results
+print("\n" + "="*50)
+print("ANALYSIS OF DELAY TYPES")
+print("="*50)
+
+# Find which delay type affects the most airports worst
+airport_worst = {}
+for _, row in delay_analysis.iterrows():
+    airport = row['airport_code']
+    delays = {
+        'Weather': row['Weather_Proportion'],
+        'Carrier': row['Carrier_Proportion'], 
+        'Security': row['Security_Proportion']
+    }
+    airport_worst[airport] = max(delays, key=delays.get)
+
+# Count how many airports each delay type is worst at
+delay_worst_count = {}
+for delay in airport_worst.values():
+    delay_worst_count[delay] = delay_worst_count.get(delay, 0) + 1
+
+print(f"\nNumber of airports where each delay type is worst:")
+for delay, count in delay_worst_count.items():
+    print(f"{delay}: {count} airports")
+
+# Show which airports have each delay type as worst
+print(f"\nAirports by worst delay type:")
+for delay_type in ['Weather', 'Carrier', 'Security']:
+    airports = [airport for airport, worst in airport_worst.items() if worst == delay_type]
+    if airports:
+        print(f"{delay_type}: {', '.join(airports)}")
+
+print(f"\nConclusion:")
+print(f"Based on overall average proportions, {worst_delay} delays are the worst, ")
+print(f"affecting {delay_types[worst_delay]:.1%} of all flights on average.")
+print(f"However, the impact varies significantly by airport.")
+
+```
+
+```
+{python}
 # Include and execute your code here
 # Read in libraries
 # import pandas as pd
@@ -273,7 +416,9 @@ _type your results and analysis here_
 
 # print(df['month'].unique())
 
+
 ```
+
 
 ---
 
